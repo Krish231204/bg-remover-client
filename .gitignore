@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+target/
 
 # Editor directories and files
 .vscode/*
@@ -18,6 +19,33 @@ dist-ssr
 .idea
 .DS_Store
 *.suo
+*.swo
+*.swp
+
+# IDE
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Backend specific
+backend/target/
+backend/.mvn/
+backend/*.jar
+backend/node_modules
+
+# Frontend specific
+frontend/node_modules
+frontend/dist
+frontend/.env.local
+frontend/.env.*.local
+
+# Maven
+.mvn/
+mvnw.cmd
+
 *.ntvs*
 *.njsproj
 *.sln

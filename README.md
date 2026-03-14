@@ -1,16 +1,100 @@
-# React + Vite
+# BG Remover - Monorepo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack application for background removal with separate frontend and backend services.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+.
+├── frontend/          # React + Vite frontend application
+│   ├── src/          # React source code
+│   ├── public/       # Static assets
+│   ├── package.json  # Frontend dependencies
+│   └── vite.config.js
+│
+└── backend/          # Spring Boot Java backend
+    ├── src/         # Java source code
+    ├── pom.xml      # Maven configuration
+    └── mvnw         # Maven wrapper
+```
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
+- Node.js 16+ (for frontend)
+- Java 21+ (for backend)
+- Maven (or use the mvnw wrapper)
 
-## Expanding the ESLint configuration
+### Frontend Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will be available at `http://localhost:5173`
+
+### Backend Setup
+
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+The backend will be available at `http://localhost:8080`
+
+## Environment Variables
+
+### Frontend (.env)
+```
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+```
+
+### Backend (application.properties)
+Configure in `backend/src/main/resources/application.properties`
+
+## Building
+
+### Frontend
+```bash
+cd frontend
+npm run build
+```
+
+### Backend
+```bash
+cd backend
+./mvnw clean package
+```
+
+## API Documentation
+
+The backend provides REST APIs for background removal operations. Endpoints are secured with JWT authentication via Clerk.
+
+## Tech Stack
+
+**Frontend:**
+- React 19
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Clerk Authentication
+
+**Backend:**
+- Spring Boot 4.0.1
+- Spring Security
+- Spring Data JPA
+- MySQL
+- JWT (JJWT)
+- Lombok
+
+## Development Workflow
+
+1. Start the backend server
+2. Start the frontend development server
+3. Frontend will make API calls to `http://localhost:8080`
+
+## Contributing
+
+Please ensure code follows project conventions and includes appropriate tests.
