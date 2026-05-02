@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/images")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(originPatterns = {"https://*.up.railway.app", "https://*.vercel.app", "http://localhost:*", "http://127.0.0.1:*"})
 public class ImageHistoryController {
     
     private final ImageHistoryService imageHistoryService;

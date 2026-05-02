@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/uploads")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(originPatterns = {"https://*.up.railway.app", "https://*.vercel.app", "http://localhost:*", "http://127.0.0.1:*"})
 public class FileController {
 
     private static final String UPLOADS_DIR = "/Users/krish/Downloads/bg-remover-client/backend/uploads/";
