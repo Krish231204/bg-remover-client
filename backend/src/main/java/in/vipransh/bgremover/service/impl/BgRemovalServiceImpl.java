@@ -1,6 +1,7 @@
 package in.vipransh.bgremover.service.impl;
 
 import in.vipransh.bgremover.service.BgRemovalService;
+import java.io.BufferedReader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -8,9 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
@@ -23,6 +26,8 @@ public class BgRemovalServiceImpl implements BgRemovalService {
     private String pythonBin;
     @Value("${app.python.script:rembg_processor.py}")
     private String pythonScript;
+    @Value("${app.python.timeout.seconds:180}")
+    private long pythonTimeoutSeconds;
 
     @Override
     public String removeBackground(MultipartFile image) throws IOException {
@@ -45,23 +50,28 @@ public class BgRemovalServiceImpl implements BgRemovalService {
             pb.redirectErrorStream(true);
             
             Process process = pb.start();
-            int exitCode = process.waitFor();
+            String processOutput = readProcessOutput(process);
+            boolean finished = process.waitFor(Duration.ofSeconds(pythonTimeoutSeconds));
+            if (!finished) {
+                process.destroyForcibly();
+                throw new IOException("Rembg timed out after " + pythonTimeoutSeconds + "s");
+            }
+            int exitCode = process.exitValue();
             
             if (exitCode == 0) {
                 log.info("Background removed successfully: {}", processedFileName);
                 return "/uploads/" + processedFileName;
             } else {
-                log.error("Rembg processing failed with exit code: {}", exitCode);
-                // Return original image if processing fails
-                return originalFileName;
+                log.error("Rembg processing failed with exit code {}. Output: {}", exitCode, processOutput);
+                throw new IOException("Rembg failed (exit " + exitCode + "): " + processOutput);
             }
         } catch (InterruptedException e) {
             log.error("Rembg processing interrupted", e);
             Thread.currentThread().interrupt();
-            return originalFileName;
+            throw new IOException("Rembg processing interrupted", e);
         } catch (Exception e) {
             log.error("Error calling rembg processor", e);
-            return originalFileName;
+            throw new IOException("Error calling rembg processor: " + e.getMessage(), e);
         }
     }
 
@@ -90,5 +100,16 @@ public class BgRemovalServiceImpl implements BgRemovalService {
         log.info("File saved successfully: {}", uniqueFilename);
         
         return "/uploads/" + uniqueFilename;
+    }
+
+    private String readProcessOutput(Process process) throws IOException {
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append('\n');
+            }
+        }
+        return output.toString().trim();
     }
 }
