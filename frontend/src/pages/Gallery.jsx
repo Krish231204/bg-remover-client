@@ -3,6 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Trash2, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import API_BASE_URL from "../config";
 
 const Gallery = () => {
     const { user, isLoaded } = useUser();
@@ -20,7 +21,7 @@ const Gallery = () => {
 
     const fetchUserImages = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/images/history/${user.id}`);
+            const response = await fetch(`${API_BASE_URL}/api/images/history/${user.id}`);
             const data = await response.json();
             setImages(data);
         } catch (error) {
@@ -36,7 +37,7 @@ const Gallery = () => {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/images/${imageId}/${user.id}`,
+                `${API_BASE_URL}/api/images/${imageId}/${user.id}`,
                 { method: "DELETE" }
             );
 
@@ -54,7 +55,7 @@ const Gallery = () => {
 
     const handleDownload = (imagePath) => {
         const link = document.createElement("a");
-        link.href = `http://localhost:8080/api${imagePath}`;
+        link.href = `${API_BASE_URL}/api${imagePath}`;
         link.download = `processed-${Date.now()}.png`;
         link.click();
     };
@@ -100,7 +101,7 @@ const Gallery = () => {
                                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                             >
                                 <img
-                                    src={`http://localhost:8080/api${image.processedImagePath}`}
+                                    src={`${API_BASE_URL}/api${image.processedImagePath}`}
                                     alt={image.originalFileName}
                                     className="w-full h-48 object-cover"
                                 />

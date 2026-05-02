@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { useUser } from "@clerk/clerk-react";
+import API_BASE_URL from "../config";
 
 const Header = () =>{
     const inputRef = useRef(null);
@@ -23,7 +24,7 @@ const Header = () =>{
                 formData.append("userId", user.id);
             }
 
-            const response = await fetch("http://localhost:8080/api/bgremover/remove", {
+            const response = await fetch(`${API_BASE_URL}/api/bgremover/remove`, {
                 method: "POST",
                 body: formData,
             });
@@ -49,7 +50,7 @@ const Header = () =>{
         if (!processedImage) return;
         
         const link = document.createElement("a");
-        link.href = `http://localhost:8080/api${processedImage}`;
+        link.href = `${API_BASE_URL}/api${processedImage}`;
         link.download = "processed-image.png";
         link.click();
     };
@@ -66,7 +67,7 @@ const Header = () =>{
                             className="shadow-[0_50px_50px_-12px_rgba(0,0,0,0.15)] rounded-4xl overflow-hidden"
                         >
                             <img 
-                                src={`http://localhost:8080/api${processedImage}`}
+                                src={`${API_BASE_URL}/api${processedImage}`}
                                 alt="Processed"
                                 className="w-full max-w-[400px] h-auto object-cover"
                             />
