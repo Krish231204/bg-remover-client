@@ -8,7 +8,7 @@ import sys
 import os
 from pathlib import Path
 from PIL import Image
-from rembg import remove
+from rembg import remove, new_session
 
 def process_image(input_path: str, output_path: str) -> bool:
     """
@@ -31,8 +31,10 @@ def process_image(input_path: str, output_path: str) -> bool:
         with open(input_path, 'rb') as i:
             input_data = i.read()
         
-        # Remove background
-        output_data = remove(input_data)
+        # Use a lighter model by default to avoid OOM on small containers.
+        model_name = os.getenv("REMBG_MODEL", "u2netp")
+        session = new_session(model_name)
+        output_data = remove(input_data, session=session)
         
         # Ensure output directory exists
         output_dir = os.path.dirname(output_path)
