@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import java.util.UUID;
 
 @Service
@@ -51,7 +51,7 @@ public class BgRemovalServiceImpl implements BgRemovalService {
             
             Process process = pb.start();
             String processOutput = readProcessOutput(process);
-            boolean finished = process.waitFor(Duration.ofSeconds(pythonTimeoutSeconds));
+            boolean finished = process.waitFor(pythonTimeoutSeconds, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
                 throw new IOException("Rembg timed out after " + pythonTimeoutSeconds + "s");
